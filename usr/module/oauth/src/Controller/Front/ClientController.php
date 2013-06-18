@@ -1,4 +1,4 @@
- <?php
+<?php
 namespace Module\Oauth\Controller\Front;
 
 use Pi;

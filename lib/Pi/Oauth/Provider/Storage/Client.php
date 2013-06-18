@@ -37,6 +37,7 @@ class Client extends AbstractStorage implements ValidateInterface
             'client_id'     => md5(rand()),
             'client_secret' => md5(rand()),
             'time_create'   => time(),
+            'scope'         => 'base'
         );
     }
 }

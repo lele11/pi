@@ -254,7 +254,7 @@ class Service
         if (null === $resourceOwner) {
             return isset(static::$registry[$key]) ? static::$registry[$key] : null;
         }
-        static::$registry[$key] = $resourceOwner;
+        return static::$registry[$key] = $resourceOwner;
     }
 }
 
