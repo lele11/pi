@@ -25,49 +25,49 @@ return array(
     // If URI is a relative one then www root URI will be prepended
     'uri'       => array(
         // WWW root URI
-        'www'       => 'http://siteurl.tld',
+        'www'       => 'http://pi-oauth.com',
         // URI to access uploads directory
-        'upload'    => 'http://siteurl.tld/upload',
+        'upload'    => 'http://pi-oauth.com/upload',
         // URI to access assets directory
-        'asset'     => 'http://siteurl.tld/asset',
+        'asset'     => 'http://pi-oauth.com/asset',
         // URI to access static files directory
-        'static'    => 'http://siteurl.tld/static',
+        'static'    => 'http://pi-oauth.com/static',
     ),
 
     // Paths to resources
     // If path is a relative one then www root path will be prepended
     'path'      => array(
         // WWW root path
-        'www'       => '/path/to/www',
+        'www'       => '/var/www/html/pi/www',
         // Library directory
-        'lib'       => '/path/to/lib',
+        'lib'       => '/var/www/html/pi/lib',
         // User extension directory
-        'usr'       => '/path/to/usr',
+        'usr'       => '/var/www/html/pi/usr',
         // User data directory
-        'var'       => '/path/to/var',
+        'var'       => '/var/www/html/pi/var',
         // Application module directory
-        'module'    => '/path/to/usr/module',
+        'module'    => '/var/www/html/pi/usr/module',
         // Theme directory
-        'theme'     => '/path/to/usr/theme',
+        'theme'     => '/var/www/html/pi/usr/theme',
 
         // Path to uploads directory
-        'upload'    => '/path/to/www/upload',
+        'upload'    => '/var/www/html/pi/www/upload',
         // Path to assets directory
-        'asset'     => '/path/to/www/asset',
+        'asset'     => '/var/www/html/pi/www/asset',
         // Path to static files directory
-        'static'    => '/path/to/www/static',
+        'static'    => '/var/www/html/pi/www/static',
 
         // Path to vendor library directory
         // Optional, default as lib/vendor
-        'vendor'    => '/path/to/lib/vendor',
+        'vendor'    => '/var/www/html/pi/lib/vendor',
 
         // Dependent paths
         // Note: optional, will be located in var if not specified
         // Path to global configuration directory
-        'config'    => '/path/to/var/config',
+        'config'    => '/var/www/html/pi/var/config',
         // Path to cache files directory
-        'cache'     => '/path/to/var/cache',
+        'cache'     => '/var/www/html/pi/var/cache',
         // Path to logs directory
-        'log'       => '/path/to/var/log',
+        'log'       => '/var/www/html/pi/var/log',
     )
 );

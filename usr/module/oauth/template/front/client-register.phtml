@@ -1,0 +1,14 @@
+<head>Oauth 应用注册页面</head>
+<?php echo $this->form()->openTag($form); ?>
+
+<?php $element = $form->get('clientname'); ?>
+<div><span>应用名称：</span><?php echo $this->formElement($element) ?> </div>
+<?php $element = $form->get('redirect_uri'); ?>
+<div><span>应用地址：</span><?php echo $this->formElement($element) ?></div>
+<?php $element = $form->get('clienttype'); ?>
+<div><span>应用类型：</span><?php echo $this->formElement($element) ?></div>
+<?php $element = $form->get('submit'); ?>
+<div><?php echo $this->formElement($element) ?></div>
+
+
+<?php echo $this->form()->closeTag();?>
