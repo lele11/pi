@@ -1,13 +1,13 @@
 <?php
 namespace Pi\Oauth\Provider\Result;
 
-use Oauth\Provider\Http\Response as HttpResponse;
+use Pi\Oauth\Provider\Http\Response as HttpResponse;
 
 class Redirect extends HttpResponse
 {
     public function __construct($uri)
     {
-        $this->addHeaderLine('Location', $uri);
+        $this->getHeaders()->addHeaderLine('Location', $uri);
         $this->setStatusCode(302);
     }
 }

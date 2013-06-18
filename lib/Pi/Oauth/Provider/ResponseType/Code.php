@@ -5,7 +5,7 @@ use Pi\Oauth\Provider\Service;
 
 class Code extends AbstractResponseType
 {
-    public function process($params)
+    public function process(array $params)
     {
         $code = Service::storage('authorization_code')->add(array(
             'client_id'     => $params['client_id'],

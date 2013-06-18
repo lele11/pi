@@ -1,8 +1,9 @@
 <?php
-namespace Pi\Oauth\Provider\Storage\Model;
+namespace Pi\Oauth\Provider\Storage\Model\Database;
 
 use Pi;
 use Pi\Oauth\Provider\Service;
+use Pi\Oauth\Provider\Storage\Model\LoaderInterface;
 
 class Loader implements LoaderInterface
 {

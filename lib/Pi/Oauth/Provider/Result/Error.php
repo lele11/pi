@@ -28,7 +28,7 @@ class Error extends Response
             ->setErrorUri($errorUri)
             ->errorType('error');
         $this->setStatusCode(null === $statusCode ? 400 : $statusCode);
-        $this->addHeaderLine('Cache-Control', 'no-store');
+        $this->getHeaders()->addHeaderLine('Cache-Control', 'no-store');
 
         return $this;
     }

@@ -130,9 +130,10 @@ class Service
     {
         $key = __FUNCTION__ . '-' . $identifier;
         if (!isset(static::$registry[$key])) {
-            $configs = static::config('storage', $identifier);
+            $configs = static::config('storage', $identifier);;
+            $modelConfig = $configs['model_set'];
             if (!$model) {
-                $modelSet = isset($configs['model_set']) ? $configs['model_set'] : 'database';
+                $modelSet = isset($modelConfig) ? $modelConfig : 'database';
                 if ($modelSet instanceof \Closure) {
                     $model = $modelSet($identifier);
                 } else {

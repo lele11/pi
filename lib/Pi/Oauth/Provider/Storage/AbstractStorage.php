@@ -1,7 +1,7 @@
 <?php
 namespace Pi\Oauth\Provider\Storage;
 
-use Pi\Oauth\Service;
+use Pi\Oauth\Provider\Service;
 
 abstract class AbstractStorage implements ModelInterface
 {

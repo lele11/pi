@@ -17,7 +17,6 @@ class Request extends HttpRequest
         if (null === $result) {
             $result = $this->getQuery($name);
         }
-
         return $result;
     }
 

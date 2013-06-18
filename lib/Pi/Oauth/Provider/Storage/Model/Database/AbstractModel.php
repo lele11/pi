@@ -4,7 +4,7 @@ namespace Pi\Oauth\Provider\Storage\Model\Database;
 use Pi\Oauth\Provider\Storage\ModelInterface;
 use Pi\Application\Model\Model as DbModel;
 
-abstract class AbstractModel extends ModelInterface
+abstract class AbstractModel implements ModelInterface
 {
     protected $model;
 
@@ -20,10 +20,13 @@ abstract class AbstractModel extends ModelInterface
         return $result;
     }
 
-    public function get($id)
+    public function get($value,$name = 'id')
     {
-        $row = $this->model->find($id);
-        $params = $row->toArray();
+        $params = '';
+        $row = $this->model->find($value,$name);
+        if ($row) {
+            $params = $row->toArray();
+        }             
         return $params;
     }
 
