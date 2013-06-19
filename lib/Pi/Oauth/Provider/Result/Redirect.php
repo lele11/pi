@@ -11,5 +11,8 @@ class Redirect extends HttpResponse
         $this->setStatusCode(302);
     }
 
-   
+    // public function send()
+    // {
+    //     $this->sendHeaders();
+    // }
 }

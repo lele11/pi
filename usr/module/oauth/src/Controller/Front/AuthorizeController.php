@@ -36,12 +36,13 @@ class AuthorizeController extends ActionController
                 ),
             ),
             'storage'   => array(
-                'client'                => array(
-                    'model_set'             => array(
+                'model_set'             => array(
                         'name'      => 'database',
                         'config'    => array(
                             'table_prefix'  => 'oauth',
                         ),
+                'client'                => array(
+                    
                     ),
                 ),
                 'authorization_code'    => array(
@@ -57,7 +58,15 @@ class AuthorizeController extends ActionController
                     'expires_in'    => 1209600,
                     'length'        => 40,
                 ),
-    ),
+            ),
+             'response_type' => array(
+                'code' => array(
+                    'length' => 40,
+                    'expires_in' => 40,
+                ),
+                'token' => array(),
+
+            ),
         );
         Oauth::boot($config);
         $authorize =  Oauth::server('authorization');
@@ -67,14 +76,8 @@ class AuthorizeController extends ActionController
         $request->setParameters($this->getParams());
         $authorize->process($request);
         $result = $authorize->getResult();
-        d(get_class($result));
         $result->send();
-        // $params = $this->getParams();
-        // if ($this->isLogin()) {
-        //     $this->loginAction();
-        // } else {
-            // $this->view()->setTemplate(false);
-        // }
+        exit();
     }
 
     public function authorizeAction()

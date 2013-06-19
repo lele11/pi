@@ -39,7 +39,7 @@ class Response extends HttpResponse
                 break;
             case 'json':
             default:
-                // $this->addHeaderLine('Content-Type', 'application/json');
+                $this->getHeaders()->addHeaderLine('Content-Type', 'application/json');
                 break;
         }
         return $this;

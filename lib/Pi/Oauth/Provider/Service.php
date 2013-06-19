@@ -131,7 +131,7 @@ class Service
         $key = __FUNCTION__ . '-' . $identifier;
         if (!isset(static::$registry[$key])) {
             $configs = static::config('storage', $identifier);;
-            $modelConfig = $configs['model_set'];
+            $modelConfig = isset($configs['model_set']) ? $configs['model_set'] : static::config('storage','model_set');
             if (!$model) {
                 $modelSet = isset($modelConfig) ? $modelConfig : 'database';
                 if ($modelSet instanceof \Closure) {
@@ -149,7 +149,7 @@ class Service
                     $model = $classLoader::load($identifier);
                 }
             }
-            $config = isset($configs[$identifier]) ? $configs[$identifier] : array();
+            $config = isset($configs) ? $configs : array();
             $config['model'] = $model;
             $classStorage = __NAMESPACE__ . '\\Storage\\' . static::canonizeName($identifier);
             static::$registry[$key] = new $classStorage($config);
