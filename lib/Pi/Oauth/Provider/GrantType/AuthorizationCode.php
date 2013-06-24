@@ -51,7 +51,7 @@ class AuthorizationCode extends AbstractGrantType
         return true;
     }
 
-    public function createToken()
+    public function createToken($createRreshToken = false)
     {
         $request = $this->getRequest();
         Service::storage('authorization_code')->delete($request->getRequest('code'));

@@ -126,7 +126,7 @@ class Response extends HttpResponse
     public function send()
     {
         $this->sendHeaders()
-             ->sendContent();d();b();
+             ->sendContent();
         return $this;
     }
 }

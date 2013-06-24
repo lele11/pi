@@ -77,14 +77,14 @@ class Grant extends AbstractServer
     protected function validateRequest()
     {
         $request = $this->getRequest();
-
+        
         /**
          * @see http://tools.ietf.org/html/rfc6749#section-3.2
          */
-        if (!$request->isPost()) {
-            $this->setError('invalid_request', 'The client MUST use the HTTP "POST" method when making access token requests.');
-            return false;
-        }
+        // if (!$request->isPost()) {
+        //     $this->setError('invalid_request', 'The client MUST use the HTTP "POST" method when making access token requests.');
+        //     return false;
+        // }
 
         // Determine grant type from request
         $grantType = $request->getRequest('grant_type');
@@ -102,7 +102,7 @@ class Grant extends AbstractServer
         if (!$this->validateRequest()) {
             return false;
         }
-        $grantType = $this->grantType($request->getRequest('grant_type'));
+        $grantType = $this->grantType($request->getRequest('grant_type'));d($grantType);
         $token = $grantType->process($request);
         if ($token) {
             $this->setResult($token);

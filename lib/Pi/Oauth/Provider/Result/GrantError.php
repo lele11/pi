@@ -4,7 +4,7 @@ namespace Pi\Oauth\Provider\Result;
 /**
  * @see http://tools.ietf.org/html/rfc6749#section-5.2
  */
-class GrantError extends GrantError
+class GrantError extends Error
 {
     protected $errors = array(
         'invalid_request'           =>  'The request is missing a required parameter, includes an unsupported parameter value (other than grant type), repeats a parameter, includes multiple credentials, utilizes more than one mechanism for authenticating the client, or is otherwise malformed.',

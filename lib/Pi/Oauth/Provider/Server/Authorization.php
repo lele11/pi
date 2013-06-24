@@ -147,7 +147,7 @@ class Authorization extends AbstractServer
         $redirectUri = $params['redirect_uri'];
         $responseType = $params['response_type'];
         $result = $this->responseType($responseType)->process($params);
-        $uri = $this->buildUri($redirectUri, $result);d($uri);
+        $uri = $this->buildUri($redirectUri, $result);
         $this->result = Service::result('redirect', 'http://'.$uri);
     }
 

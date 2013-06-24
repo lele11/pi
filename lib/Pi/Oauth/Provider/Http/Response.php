@@ -35,7 +35,7 @@ class Response extends HttpResponse
     {
         switch ($this->format) {
             case 'xml':
-                $this->addHeaderLine('Content-Type', 'text/xml');
+                $this->getHeasers()->addHeaderLine('Content-Type', 'text/xml');
                 break;
             case 'json':
             default:

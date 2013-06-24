@@ -4,15 +4,12 @@ namespace Module\Oauth\Controller\Front;
 use Pi;
 use Pi\Mvc\Controller\ActionController;
 use Pi\Oauth\Provider\Service as Oauth;
-use Module\Systme\Form\LoginForm;
-// use Module\Oauth\Form\AuthorizationForm;
+use Module\Oauth\Lib\UserHandler as User;
 
 class AuthorizeController extends ActionController
 {
     public function indexAction()
     {
-        //get config 
-        //new a service
         $config = array(
             'server'    => array(
                 'authorization' => array(
@@ -68,42 +65,68 @@ class AuthorizeController extends ActionController
 
             ),
         );
-        Oauth::boot($config);
-        $authorize =  Oauth::server('authorization');
-        $request = Oauth::request();
-        /** set requeste parameters 
+        /**
+        * if user is not logged,redirect to login page ,which is defined by resource owner
+        * the login form  may provided by user module 
+        * 添加强制登录选项，使用login参数，跳转到登录页面，需要去除，默认跳转不能实现，构造链接需要解决URL编码问题
+        * 解决编码问题，页面跳转可使用js和程序两种方式，
         */
-        $request->setParameters($this->getParams());
-        $authorize->process($request);
-        $result = $authorize->getResult();
-        $result->send();
-        exit();
+
+        $login_status = $this->params('login',0);
+        if (!is_numeric($login_status)) {
+            return;
+        }
+
+        if (!$login_status) {
+            $login_status = !$this->isLogin();
+        } else {
+            // User::logout();
+        }
+
+        if ($login_status) {
+            // $this->loginPage();
+            $login_page = 'http://pi-oauth.com/system/login/index';
+            $this->view()->assign('login',$login_page);
+            $this->view()->setTemplate('authorize-redirect');
+            return;
+        }
+
+        if (!$this->request->ispost()) {
+            $this->view()->setTemplate('authorize-auth');
+            return;
+        } 
+
+        if ($this->params('auth')) {
+            Oauth::boot($config);
+            $authorize =  Oauth::server('authorization');
+            $request = Oauth::request();
+            $request->setParameters($this->getParams()); 
+            $authorize->process($request);
+            $result = $authorize->getResult();            
+            $this->view()->setTemplate('false');
+            $result->send();
+            return;
+        }
     }
 
-    public function authorizeAction()
+    /**
+    * redirect to login page ,the address of log page is provided by resource owner 
+    * 原计划使用函数进行跳转，由于URL转码问题，使用JavaScript进行
+    */
+    protected function loginPage()
     {
-        $server = new Oauth();
-        $server->boot($config);
-        $server_config = $server->config('server','grant');
+        $loacation = Pi::url('') . $this->request->getServer('REDIRECT_URL');        
+        $resource_login = 'http://pi-oauth.com/system/login/index/';
+        $this->redirect()->toUrl($resource_login);
     }
 
-    public function loginAction()
-    {
-        $form = $this->authorizeLoginForm();
-        $this->view()->assign('form',$form);
-        $this->view()->setTemplate('authorize-auth');
-    }
-
-    protected function authorizeLoginForm()
-    {
-        $form = new LoginForm('login');
-        $form->setAttribute('action', $this->url('', array('action' => 'login')));
-
-        return $form;
-    }
+    /**
+    * check if user logged
+    * @return bool
+    */
     protected function isLogin()
     {
-
+        return User::isLogin();
     }
     /**
     * get paramesters of request  
@@ -124,52 +147,5 @@ class AuthorizeController extends ActionController
             'state'         => $state,
             'scope'         => $scope
         );
-    }
-    protected function config()
-    {
-             $config = array(
-    'server'    => array(
-        'authorization' => array(
-            'response_types'    => array(
-                'code', 'token',
-            ),
-        ),
-        'grant' => array(
-            'grant_types'   => array(
-                'authorization_code'    => 'AuthorizationCode',
-                'password'              => 'Password',
-                'client_credentials'    => 'ClientCredentials',
-                'refresh_token'         => 'RefreshToken',
-                'urn:ietf:params:oauth:grant-type:jwt-bearer'
-                                        => 'JwtBearer',
-            ),
-        ),
-        'resource'  => array(
-            'token_type'    => 'bearer',
-            'www_realm'     => 'service',
-        ),
-    ),
-    'storage'   => array(
-        'model_set'             => array(
-            'name'      => 'database',
-            'config'    => array(
-                'table_prefix'  => 'oauth',
-            ),
-        ),
-        'authorization_code'    => array(
-            'expires_in'    => 30,
-            'length'        => 40,
-        ),
-        'access_token'  => array(
-            'token_type'    => 'bearer',
-            'expires_in'    => 3600,
-            'length'        => 40,
-        ),
-        'refresh_token' => array(
-            'expires_in'    => 1209600,
-            'length'        => 40,
-        ),
-    ),
-);
     }
 }

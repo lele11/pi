@@ -28,6 +28,11 @@ class UserHandler
         } 
     }
 
+    static function isLogin()
+    {
+        return Pi::service('authentication')->hasIdentity();
+    }
+
     static function userlogin($data) 
     {
         $result = Pi::service('authentication')->authenticate($data['identity'], $data['credential']);            
@@ -36,12 +41,17 @@ class UserHandler
     }
 
     static function setUserAuthorize($data)
-    {d($data);
+    {
         $model = Pi::model('user_authorization','oauth');
         $rowset = $model->select(array('cid' => $data['cid'],'uid' => $data['uid']));
         if (!$rowset->toArray()) {
             $row = $model->createRow($data);
             $row->save(); 
         }
+    }
+
+    static function logout()
+    {
+        Pi::service('session')->manager()->destroy();
     }
 }

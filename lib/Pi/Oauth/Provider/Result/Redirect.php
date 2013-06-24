@@ -10,9 +10,4 @@ class Redirect extends HttpResponse
         $this->getHeaders()->addHeaderLine('Location', $uri);
         $this->setStatusCode(302);
     }
-
-    // public function send()
-    // {
-    //     $this->sendHeaders();
-    // }
 }
