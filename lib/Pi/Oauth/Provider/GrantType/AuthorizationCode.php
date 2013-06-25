@@ -26,7 +26,7 @@ class AuthorizationCode extends AbstractGrantType
     {
         $request = $this->getRequest();
         $code = $request->getRequest('code');
-        $codeData = Service::storage('authorization_code')->get($code);
+        $codeData = Service::storage('authorization_code')->getCodebyCode($code);
         if (!$codeData) {
             $this->setError('invalid_grant');
             return false;
@@ -37,16 +37,28 @@ class AuthorizationCode extends AbstractGrantType
             return false;
         }
 
+        // if ($codeData['expires'] < time()) {
+        //     $this->setError('invalid_grant');
+        //     return false;
+        // }
+
         /*
          * 4.1.3 - ensure that the "redirect_uri" parameter is present if the "redirect_uri" parameter was included in the initial authorization request
          * @uri - http://tools.ietf.org/html/rfc6749#section-4.1.3
          */
         if (!empty($codeData['redirect_uri'])) {
-            if (!$request->request('redirect_uri') || urldecode($request->request('redirect_uri')) != $codeData['redirect_uri']) {
+            if (!$request->getRequest('redirect_uri') || urldecode($request->getRequest('redirect_uri')) != $codeData['redirect_uri']) {
                 $this->setError('invalid_grant');
                 return false;
             }
-        }
+        }d($codeData);
+        /**
+        * set authorization code scope and resource owner
+        */
+        $request->setParameters(array(
+            'scope'             => $codeData['scope'],
+            'resource_owner'    => $codeData['resource_owner']
+        ));
 
         return true;
     }
@@ -54,11 +66,12 @@ class AuthorizationCode extends AbstractGrantType
     public function createToken($createRreshToken = false)
     {
         $request = $this->getRequest();
-        Service::storage('authorization_code')->delete($request->getRequest('code'));
+        // Service::storage('authorization_code')->deleteCode($request->getRequest('code'));
 
         // @see http://tools.ietf.org/html/rfc6749#section-4.1.4 Optional for authorization_code grant_type
         $createFreshToken = Service::server('grant')->hasGrantType('refresh_token');
         $token = parent::createToken($createFreshToken);
+
 
         return $token;
     }

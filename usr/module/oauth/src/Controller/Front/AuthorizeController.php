@@ -91,22 +91,24 @@ class AuthorizeController extends ActionController
             return;
         }
 
-        if (!$this->request->ispost()) {
-            $this->view()->setTemplate('authorize-auth');
-            return;
-        } 
+        $resource_owner = User::getUserid();
 
-        if ($this->params('auth')) {
-            Oauth::boot($config);
-            $authorize =  Oauth::server('authorization');
-            $request = Oauth::request();
-            $request->setParameters($this->getParams()); 
-            $authorize->process($request);
-            $result = $authorize->getResult();            
-            $this->view()->setTemplate('false');
-            $result->send();
-            return;
+        Oauth::boot($config);
+        $authorize =  Oauth::server('authorization');
+        $request = Oauth::request();
+        $params = $this->getParams();
+        $params['resource_owner'] = $resource_owner;
+        $request->setParameters($params); 
+
+        if ($authorize->process($request) && !$this->request->ispost()) {            
+            $this->view()->setTemplate('authorize-auth');
+            return;            
         }
+        $result = $authorize->getResult();           
+        $this->view()->setTemplate('authorize-ull');
+        $result->send();
+        return;
+        
     }
 
     /**
@@ -145,7 +147,7 @@ class AuthorizeController extends ActionController
             'response_type' => $response_type,
             'redirect_uri'  => $redirect_uri,
             'state'         => $state,
-            'scope'         => $scope
+            'scope'         => $scope,
         );
     }
 }

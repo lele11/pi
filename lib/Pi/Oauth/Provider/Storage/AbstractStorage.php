@@ -36,9 +36,7 @@ abstract class AbstractStorage implements ModelInterface
             if (!isset($params['expires'])) {
                 $params['expires'] = time() + $this->config['expires_in'];
             }
-            if (!isset($params['resource_owner'])) {
-                $params['resource_owner'] = Service::resourceOwner();
-            }
+            
         }
 
         $result = $this->model->add($params);
@@ -89,7 +87,7 @@ abstract class AbstractStorage implements ModelInterface
      *
      * @ingroup oauth2_section_4
      */
-    protected function generateCode($len = 40)
+    public function generateCode($len = 40)
     {
         if (file_exists('/dev/urandom')) { // Get 100 bytes of random data
             $randomData = file_get_contents('/dev/urandom', false, null, 0, 100) . uniqid(mt_rand(), true);

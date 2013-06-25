@@ -16,8 +16,11 @@ class RefreshToken extends AbstractStorage implements CodeInterface
         if (!isset($params['token'])) {
             $params['token'] = $this->generateCode($this->config['length']);
         }
-
-        parent::add($params);
+        d($params);
+        $tokenData = $this->model->getToken($params);d($tokenData);
+        if (empty($tokenData)) {
+            parent::add($params);
+        }
         return $params['token'];
     }
 }

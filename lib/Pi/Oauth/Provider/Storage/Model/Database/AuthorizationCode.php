@@ -10,4 +10,27 @@ class AuthorizationCode extends AbstractModel implements ValidateInterface
     {
 
     }
+
+    /**
+    * get code data by client_id and user id
+    * @return array
+    */
+    public function getCode($params)
+    {
+        $code = $this->model->select(array(
+            'client_id'     => $params['client_id'],
+            'resource_owner'=> $params['resource_owner'],
+        ))->toArray();
+        return $code[0];
+    }
+
+    /**
+    * delete authorization code which has been used
+    */
+    public function delete($code)
+    {
+        $result = $this->model->delete(array('code' => $code));
+        return $result;
+    }
 }
+

@@ -102,7 +102,7 @@ class Grant extends AbstractServer
         if (!$this->validateRequest()) {
             return false;
         }
-        $grantType = $this->grantType($request->getRequest('grant_type'));d($grantType);
+        $grantType = $this->grantType($request->getRequest('grant_type'));
         $token = $grantType->process($request);
         if ($token) {
             $this->setResult($token);

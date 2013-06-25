@@ -76,13 +76,16 @@ abstract class AbstractGrantType
     {
         $request = $this->getRequest();
         $params = array(
-            'client_id' => $request->getRequest('client_id'),
-            'scope'     => $request->getRequest('scope'),
+            'client_id'     => $request->getRequest('client_id'),
+            'scope'         => $request->getRequest('scope'),
+            'resource_owner'=> $request->getRequest('resource_owner'),
         );
         $tokenData = Service::storage('access_token')->add($params);
 
         if ($createRreshToken) {
-            $refreshToken = Service::storage('refresh_token')->add(array('client_id' => $request->getRequest('client_id')));
+            $refreshToken = Service::storage('refresh_token')->add(array(
+                    'client_id'         => $request->getRequest('client_id'),
+                    'resource_owner'    => $request->getRequest('resource_owner')));
             $tokenData['refresh_token'] = $refreshToken;
         }
         return $tokenData;

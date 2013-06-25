@@ -143,12 +143,17 @@ class Authorization extends AbstractServer
         if (!$params) {
             return false;
         }
+        /**
+        * insert resource owner of this authorize , set in module
+        */
+        $params['resource_owner'] = $request->getRequest('resource_owner');
 
         $redirectUri = $params['redirect_uri'];
         $responseType = $params['response_type'];
         $result = $this->responseType($responseType)->process($params);
         $uri = $this->buildUri($redirectUri, $result);
         $this->result = Service::result('redirect', 'http://'.$uri);
+        return true;
     }
 
     public function setError($error, $errorDescription = null, $errorUri = null, $statusCode = 400)

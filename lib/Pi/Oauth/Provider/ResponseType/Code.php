@@ -11,6 +11,7 @@ class Code extends AbstractResponseType
             'client_id'     => $params['client_id'],
             'redirect_uri'  => $params['redirect_uri'],
             'scope'         => $params['scope'],
+            'resource_owner'=> $params['resource_owner'],
         ));
 
         // build the URL to redirect to

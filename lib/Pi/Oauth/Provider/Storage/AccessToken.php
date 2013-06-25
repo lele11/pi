@@ -9,8 +9,15 @@ class AccessToken extends AbstractStorage implements CodeInterface
             $params['token'] = $this->generateCode($this->config['length']);
         }
 
-        parent::add($params);
-        $params['token_type'] = $this->config['token_type'];
-        return $params;
+        $tokenData = $this->model->getToken($params);
+        if (empty($tokenData)) {
+            parent::add($params);
+        }
+        
+        return array(
+            'token_type'    => $this->config['token_type'],
+            'expires_in'    => $this->config['expires'],
+            'access_token'  => $params['token'],
+        );
     }
 }

@@ -10,7 +10,7 @@ class GrantResponse extends Response
 
         // @see http://tools.ietf.org/html/rfc6749#section-5.1
         // server MUST disable caching in headers when tokens are involved
-        $this->addHeaderLine('Cache-Control', 'no-store');
-        $this->addHeaderLine('Pragma', 'no-cache');
+        $this->getHeaders()->addHeaderLine('Cache-Control', 'no-store');
+        $this->getHeaders()->addHeaderLine('Pragma', 'no-cache');
     }
 }

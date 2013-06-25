@@ -22,7 +22,7 @@ class Request extends HttpRequest
 
     public function setParameters($params = array())
     {
-        $this->parameters = $params;
+        $this->parameters = array_merge($this->parameters,$params);
         return $this;
     }
 }
