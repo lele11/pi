@@ -16,7 +16,7 @@ class AccessToken extends AbstractStorage implements CodeInterface
         
         return array(
             'token_type'    => $this->config['token_type'],
-            'expires_in'    => $this->config['expires'],
+            'expires_in'    => $this->config['expires_in'],
             'access_token'  => $params['token'],
         );
     }

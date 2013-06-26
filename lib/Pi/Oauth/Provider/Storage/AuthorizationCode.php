@@ -32,15 +32,6 @@ class AuthorizationCode extends AbstractStorage implements CodeInterface
         return $params['code'];
     }
 
-
-    /**
-    * make a authorization code expired 
-    */
-    public function expire($expires = null)
-    {
-
-    }
-
     /**
     * get code data by code
     * @return array

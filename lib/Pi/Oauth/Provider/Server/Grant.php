@@ -93,6 +93,11 @@ class Grant extends AbstractServer
             return false;
         }
 
+        if (!$this->hasGrantType($grantType)) {
+            $this->setError('invalid_request', 'The grant type was invalided');
+            return false;
+        }
+
         return true;
     }
 

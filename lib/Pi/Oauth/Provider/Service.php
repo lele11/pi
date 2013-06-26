@@ -179,19 +179,21 @@ class Service
     {
         $key = __FUNCTION__ . '-' . $identifier;
         if (!isset(static::$registry[$key])) {
+            $config = static::config('server', 'authorization');
             $class = __NAMESPACE__ . '\\ResponseType\\' . static::canonizeName($identifier);
-            static::$registry[$key] = new $class(static::config('response_type', $identifier));
+            static::$registry[$key] = new $class($config['response_type'][$identifier]);
         }
 
         return static::$registry[$key];
     }
 
     public static function tokenType($identifier)
-    {
+    {d($identifier);b();
         $key = __FUNCTION__ . '-' . $identifier;
         if (!isset(static::$registry[$key])) {
+            $config = static::config('server', 'resource');
             $class = __NAMESPACE__ . '\\TokenType\\' . static::canonizeName($identifier);
-            static::$registry[$key] = new $class(static::config('token_type', $identifier));
+            static::$registry[$key] = new $class($config['token_type'][$identifier]);
         }
 
         return static::$registry[$key];

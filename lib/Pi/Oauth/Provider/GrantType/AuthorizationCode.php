@@ -37,10 +37,11 @@ class AuthorizationCode extends AbstractGrantType
             return false;
         }
 
-        // if ($codeData['expires'] < time()) {
-        //     $this->setError('invalid_grant');
-        //     return false;
-        // }
+        if ($codeData['expires'] < time()) {
+            Service::storage('authorization_code')->expire();
+            $this->setError('invalid_grant');
+            return false;
+        }
 
         /*
          * 4.1.3 - ensure that the "redirect_uri" parameter is present if the "redirect_uri" parameter was included in the initial authorization request
@@ -51,7 +52,7 @@ class AuthorizationCode extends AbstractGrantType
                 $this->setError('invalid_grant');
                 return false;
             }
-        }d($codeData);
+        }
         /**
         * set authorization code scope and resource owner
         */
@@ -66,7 +67,7 @@ class AuthorizationCode extends AbstractGrantType
     public function createToken($createRreshToken = false)
     {
         $request = $this->getRequest();
-        // Service::storage('authorization_code')->deleteCode($request->getRequest('code'));
+        Service::storage('authorization_code')->deleteCode($request->getRequest('code'));
 
         // @see http://tools.ietf.org/html/rfc6749#section-4.1.4 Optional for authorization_code grant_type
         $createFreshToken = Service::server('grant')->hasGrantType('refresh_token');

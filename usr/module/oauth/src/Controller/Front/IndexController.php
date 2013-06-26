@@ -10,6 +10,6 @@ class IndexController extends ActionController
 {
     public function indexAction()
     {
-        d(new Service);
+        
     }
 }
