@@ -23,4 +23,9 @@ class RefreshToken extends AbstractStorage implements CodeInterface
         }
         return $params['token'];
     }
+
+    public function get($token)
+    {
+        return $this->model->get($token);
+    }
 }

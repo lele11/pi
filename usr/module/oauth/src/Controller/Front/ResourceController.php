@@ -5,44 +5,27 @@ use Pi;
 use Pi\Mvc\Controller\ActionController;
 use Pi\Oauth\Provider\Service as Oauth;
 
-class TokenController extends ActionController
+class ResourceController extends ActionController
 {
     public function indexAction()
     {
 
     }
 
-
-    /**
-    * get new access token by refersh token
-    * params :  grant_type  must "refersh_token',
-    *           refersh_token 
-    *           client_id :optional /may use other authorization method to auth client
-    * @return json  like access_token
-    */
-    public function revokeAction()
-    {
-        $config = $this->config();
+    public function validAction()
+    { 
         $params = array(
-            'refresh_token'  => $this->params('refresh_token',''),
-            'grant_type'    => $this->params('grant_type',''),
             'client_id'     => $this->params('client_id',''),
         );
-        Oauth::boot($config);
-        $grant = Oauth::server('grant');
+        Oauth::boot($this->config());
+        $resource = Oauth::server('resource');
         $request = Oauth::request();
         $request->setParameters($params);
-        $grant->process($request);
-        $result = $grant->getResult();
-        $result->addContent();
-        // $this->view()->setTemplate(false);
-        return $result;
-        // $this->response->setStatusCode($result->getStatusCode());
-        // $this->response->setHeaders($result->getHeaders());
-        // $this->response->setContent($result->setContent()->getContent());
-        // return $this->response;
-    }
+        $resource->process($request);
+        $result = $resource->getResult();
+        $result->send();
 
+    }
 
     public function config()
     {

@@ -7,4 +7,7 @@ namespace Pi\Oauth\Provider\Result;
 class ResourceError extends GrantError
 {
     protected $errorType = 'token';
+    protected $errors = array(
+        'invalid_token'           =>  'The token is valid or expire',
+   );
 }

@@ -50,7 +50,9 @@ class Resource extends AbstractServer
     {
         $request = $this->getRequest();
         $tokenParam = $this->getTokenType()->getAccessToken($request);
-        $this->result = $this->getTokenType()->getResult();
+        if (!$tokenParam) {
+            $this->result = $this->getTokenType()->getResult();
+        }
         return $tokenParam;
     }
 
@@ -58,6 +60,7 @@ class Resource extends AbstractServer
     {
         $this->setRequest($request);
         $scope = $request->getRequest('scope');
+        $clientid = $request->getRequest('client_id');
         $tokenParam  = $this->validateRequest();
         if ($this->result && $this->result->errorType()) {
             return false;
@@ -76,6 +79,22 @@ class Resource extends AbstractServer
             return false;
         }
 
+        /**
+        * check client_id 
+        */
+        if ($clientid == $tokenData['client_id']) {
+            $this->setError('invalid_request','The client and token is not match');
+            return false;
+        }
+
+        /**
+        *check expires
+        */
+        if ($tokenData['expires'] < time()) {
+            $this->setError('invalid_token', 'The access token provided is expired');
+            return false;
+        }
+
         // Check scope, if provided
         // If token doesn't have a scope, it's null/empty, or it's insufficient, then throw an error
         if (!empty($tokenData['scope'])) {
@@ -87,6 +106,7 @@ class Resource extends AbstractServer
             }
         }
 
+        $this->setResult($tokenData);
         return true;
     }
 }

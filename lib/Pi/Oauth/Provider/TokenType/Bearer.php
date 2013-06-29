@@ -79,6 +79,7 @@ class Bearer extends AbstractTokenType
         if (!$result) {
             $tokenParam = null;
             $this->setError('invalid_token', 'The access token is malformed');
+            return null;
         }
 
         return $tokenParam;

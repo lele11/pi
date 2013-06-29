@@ -94,21 +94,21 @@ class AuthorizeController extends ActionController
         $resource_owner = User::getUserid();
 
         Oauth::boot($config);
-        $authorize =  Oauth::server('authorization');
+        $authorize = Oauth::server('authorization');
         $request = Oauth::request();
         $params = $this->getParams();
         $params['resource_owner'] = $resource_owner;
         $request->setParameters($params); 
 
-        if ($authorize->process($request) && !$this->request->ispost()) {            
+        if ($authorize->process($request) && !$this->request->ispost()) {
+            $this->view()->assign('backuri',$request->getServer('HTTP_REFERER'));       
             $this->view()->setTemplate('authorize-auth');
             return;            
         }
         $result = $authorize->getResult();           
-        $this->view()->setTemplate('authorize-ull');
+        $this->view()->setTemplate('df');
         $result->send();
-        return;
-        
+        return;        
     }
 
     /**
@@ -149,5 +149,14 @@ class AuthorizeController extends ActionController
             'state'         => $state,
             'scope'         => $scope,
         );
+    }
+
+    /**
+    * check if user has been authorized the client
+    * @return bool 
+    */
+    public function isAuthorize()
+    {
+
     }
 }

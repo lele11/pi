@@ -66,14 +66,14 @@ class Authorization extends AbstractServer
         $clientId = $request->getRequest('client_id');
         if (!$clientId) {
             // We don't have a good URI to use
-            $this->setError('invalid_request');
+            $this->setError('invalid_request','require client id');
             return false;
         }
 
         // Make sure a valid response_type was supplied
         $responseType = $request->getRequest('response_type');
         if (!$responseType) {
-            $this->setError('invalid_request');
+            $this->setError('invalid_request','resopnse type is required');
             return false;
         }
         if (!isset($this->responseTypes[$responseType])) {
@@ -88,7 +88,7 @@ class Authorization extends AbstractServer
             $redirectUri = urldecode($redirectUri);
             $parts = parse_url($redirectUri);
             if (!empty($parts['fragment'])) {
-                $this->setError('invalid_request');
+                $this->setError('invalid_request','redirect url error ');
                 return false;
             }
         }
