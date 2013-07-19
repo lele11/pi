@@ -20,7 +20,7 @@ class TokenController extends ActionController
     *           client_id :optional /may use other authorization method to auth client
     * @return json  like access_token
     */
-    public function revokeAction()
+    public function refershAction()
     {
         $config = $this->config();
         $params = array(

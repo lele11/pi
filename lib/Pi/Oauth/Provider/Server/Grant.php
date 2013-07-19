@@ -74,6 +74,11 @@ class Grant extends AbstractServer
         return $this;
     }
 
+    /**
+    * check schema and parameters of this request
+    * the request must use POST method, and support two method to get client credential : HTTP Basic and post filed
+    * the grant type must support by this server 
+    */
     protected function validateRequest()
     {
         $request = $this->getRequest();
@@ -81,10 +86,29 @@ class Grant extends AbstractServer
         /**
          * @see http://tools.ietf.org/html/rfc6749#section-3.2
          */
-        // if (!$request->isPost()) {
-        //     $this->setError('invalid_request', 'The client MUST use the HTTP "POST" method when making access token requests.');
-        //     return false;
-        // }
+        if (!$request->isPost()) {
+            $this->setError('invalid_request', 'The client MUST use the HTTP "POST" method when making access token requests.');
+            return false;
+        }
+
+         /**
+        * get client id and secret form HTTP Basic Authorization
+        */
+        if (!$request->getRequest('client_id')) {
+            if ($request->getServer('HTTP_AUTHORIZATION')) {
+                $basic = explode(' ',$request->getServer('HTTP_AUTHORIZATION'));
+                if ($basic[0] == 'Basic') {
+                    list($client_id , $client_secret) = explode(":", base64_decode($basic[1]));
+                    $request->setParameters(array(
+                        'client_id'     => $client_id,
+                        'client_secret' => $client_secret,
+                    ));
+                }
+            } else {
+                $this->setError('invalid_request','there is parameters missing : client_id');
+                return false;
+            }
+        }
 
         // Determine grant type from request
         $grantType = $request->getRequest('grant_type');

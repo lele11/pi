@@ -17,15 +17,28 @@ class Client extends AbstractModel implements ValidateInterface
 
     public function addClient($client)
     {
-        $row = $this->model->find($client['client_id'],'client_id');d($row);
+        $row = $this->model->find($client['client_id'],'client_id');
         if (!$row) {
-            return $this->add($client);
+            if ($this->add($client)) {
+                return $client;
+            }
         }
-        return null;
+        return false;
     }
 
     public function getClient($clientid)
     {
         return $this->get($clientid,'client_id');
+    }
+
+    public function getByUid($uid)
+    {
+        $rowset = $this->model->select(array(
+            'uid' => $uid,
+        ));
+        if (!empty($rowset)) {
+            return $rowset->toArray();
+        }
+        return $false;
     }
 }

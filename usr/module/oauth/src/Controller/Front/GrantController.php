@@ -48,7 +48,7 @@ class GrantController extends ActionController
                     ),            
                 ),
                 'authorization_code'    => array(
-                    'expires_in'    => 30,
+                    'expires_in'    => 300,
                     'length'        => 40,
                 ),
                 'access_token'  => array(
@@ -69,8 +69,11 @@ class GrantController extends ActionController
         $request->setParameters($this->getParams());
         $grant->process($request);
         $result = $grant->getResult();
-        $result->send();
-        $this->view()->setTemplate(false);
+        $this->response->setStatusCode($result->getStatusCode());
+        $this->response->setHeaders($result->getHeaders());
+        $this->response->setContent($result->setContent()->getContent());
+        // $this->view()->setTemplate(false);
+        return $this->response;
     }
 
     protected function getParams()
@@ -79,7 +82,7 @@ class GrantController extends ActionController
             'code'          => $this->params('code',''),
             'client_id'     => $this->params('client_id',''),
             'client_secret' => $this->params('client_secret',''),
-            'redirect_uri'  => $this->params('redirect_uri',''),
+            'redirect_uri'  => urldecode($this->params('redirect_uri','')),
             'grant_type'    => $this->params('grant_type',''),
             'scope'         => $this->params('scope',''), 
         );

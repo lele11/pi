@@ -41,11 +41,19 @@ class ClientRegisterForm extends BaseForm
                 'type'  => 'select',
                 'options' => array(
                     'authorizecode' => '网站应用',
-                    'appcode' => '移动应用',
+                    'implicit' => '移动应用',
                 ),
             )
         ));
-
+        $this->add(array(
+            'name'          => 'clientdesc',
+            'options'       => array(
+                'label' => __('应用介绍'),
+            ),
+            'attributes'    => array(
+                'type'  => 'textarea',
+            )
+        ));
         $this->add(array(
             'name'          => 'submit',
             'attributes'    => array(

@@ -74,16 +74,25 @@ class ClientController extends ActionController
                 'uid' => $uid,
                 'grant_type' => $data['clienttype'],
                 'type' => 'public',
+                'client_desc' => $data['clientdesc'],
                 );
             Oauth::boot($this->config);
-            $result = Oauth::storage('client')->addClient($data);
-            $this->view()->setTemplate('client-registersuccess');
+            // $result = Oauth::storage('client')->addClient($data);
+            $this->redirect()->toUrl('/oauth/client/list');
             return;
         }
         $this->view()->assign('form', $form);
         $this->view()->setTemplate('client-register');        
     }
 
+    public function listAction()
+    {
+        $userid = User::getUserid();
+        Oauth::boot($this->config);
+        $result = Oauth::storage('client')->get($userid, 'uid');
+        $this->view()->assign('client', $result);d($result);
+        $this->view()->setTemplate('client-registered');
+    }
     public function profileAction()
     {
         $userinfo = User::getUserinfo();
@@ -130,14 +139,5 @@ class ClientController extends ActionController
         }
         
         $this->view()->setTemplate('client-profileedit');
-    }
-
-    protected function generateClientinfo()
-    {
-        $id = md5(rand());
-        return array(
-            'id' => $id,
-            'secret' => md5('secret'.rand()),
-        );
     }
 }

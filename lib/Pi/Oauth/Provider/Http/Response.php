@@ -48,7 +48,7 @@ class Response extends HttpResponse
     /**
     * add params to content
     */
-    public function addContent($params = array())
+    public function setContent($params = array())
     {
         $params = $params ?: $this->params;
         $content = null;

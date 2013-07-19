@@ -58,12 +58,34 @@ class Authorization extends AbstractServer
         return $this->responseTypes[$type];
     }
 
-    protected function validateRequest()
+    /**
+    * valid the request , check parameters:client_id, response_type, redirect_uri, scope
+    * @return bool
+    */
+    public function validateRequest()
     {
         $request = $this->getRequest();
 
-        // Make sure a valid client id was supplied (we can not redirect because we were unable to verify the URI)
+        /** Make sure a valid client id was supplied (we can not redirect because we were unable to verify the URI)  
+        * get client id and secret form HTTP Basic Authorization
+        */
+        if (!$request->getRequest('client_id')) {
+            if ($request->getServer('HTTP_AUTHORIZATION')) {
+                $basic = explode(' ',$request->getServer('HTTP_AUTHORIZATION'));
+                if ($basic[0] == 'Basic') {
+                    list($client_id , $client_secret) = explode(":", base64_decode($basic[1]));
+                    $request->setParameters(array(
+                        'client_id'     => $client_id,
+                        'client_secret' => $client_secret,
+                    ));
+                }
+            } else {
+                $this->setError('invalid_request','there is parameters missing : client_id');
+                return false;
+            }
+        }
         $clientId = $request->getRequest('client_id');
+
         if (!$clientId) {
             // We don't have a good URI to use
             $this->setError('invalid_request','require client id');
@@ -122,31 +144,26 @@ class Authorization extends AbstractServer
             $this->setError('invalid_scope');
             return false;
         }
-
-        // Get state if available
-        $state = $request->getRequest('state');
-
-        $params = array(
-            'client_id'     => $clientId,
-            'response_type' => $responseType,
-            'redirect_uri'  => $redirectUri,
-            'scope'         => $scopeRequested->getScope(),
-            'state'         => $state,
-        );
-        return $params;
+        return true;
     }
 
     public function process(Request $request = null)
     {
         $this->setRequest($request);
-        $params = $this->validateRequest();
-        if (!$params) {
+        if (!$this->validateRequest()) {
             return false;
         }
         /**
-        * insert resource owner of this authorize , set in module
+        *  request is validate
         */
-        $params['resource_owner'] = $request->getRequest('resource_owner');
+        $params = array(
+            'client_id'      => $request->getRequest('client_id'),
+            'response_type'  => $request->getRequest('response_type'),
+            'redirect_uri'   => $request->getRequest('redirect_uri'),
+            'scope'          => $request->getRequest('scope'),
+            'state'          => $request->getRequest('state'),
+            'resource_owner' => $request->getRequest('resource_owner'),
+        );      
 
         $redirectUri = $params['redirect_uri'];
         $responseType = $params['response_type'];

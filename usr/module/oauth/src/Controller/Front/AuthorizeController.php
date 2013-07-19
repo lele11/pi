@@ -43,7 +43,7 @@ class AuthorizeController extends ActionController
                     ),
                 ),
                 'authorization_code'    => array(
-                    'expires_in'    => 30,
+                    'expires_in'    => 300,
                     'length'        => 40,
                 ),
                 'access_token'  => array(
@@ -70,45 +70,47 @@ class AuthorizeController extends ActionController
         * the login form  may provided by user module 
         * 添加强制登录选项，使用login参数，跳转到登录页面，需要去除，默认跳转不能实现，构造链接需要解决URL编码问题
         * 解决编码问题，页面跳转可使用js和程序两种方式，
-        */
-
-        $login_status = $this->params('login',0);
-        if (!is_numeric($login_status)) {
-            return;
-        }
-
-        if (!$login_status) {
-            $login_status = !$this->isLogin();
-        } else {
-            // User::logout();
-        }
-
-        if ($login_status) {
-            // $this->loginPage();
-            $login_page = 'http://pi-oauth.com/system/login/index';
-            $this->view()->assign('login',$login_page);
-            $this->view()->setTemplate('authorize-redirect');
-            return;
-        }
-
-        $resource_owner = User::getUserid();
+        */ 
 
         Oauth::boot($config);
         $authorize = Oauth::server('authorization');
         $request = Oauth::request();
         $params = $this->getParams();
-        $params['resource_owner'] = $resource_owner;
+        $params['resource_owner'] = User::getUserid();;
         $request->setParameters($params); 
 
-        if ($authorize->process($request) && !$this->request->ispost()) {
-            $this->view()->assign('backuri',$request->getServer('HTTP_REFERER'));       
-            $this->view()->setTemplate('authorize-auth');
-            return;            
+        if ($authorize->validateRequest($request)) {
+            $login_status = $this->params('login',0);
+            if (!is_numeric($login_status)) {
+                return;
+            }
+
+            if (!$login_status) {
+                $login_status = !$this->isLogin();
+            } else {
+                // User::logout();
+            }
+
+            if ($login_status) {
+                // $this->loginPage();
+                $login_page = 'http://pi-oauth.com/system/login/index';
+                $this->view()->assign('login',$login_page);
+                $this->view()->setTemplate('authorize-redirect');
+                return;
+            }
+            if (!$request->ispost()) {
+                $this->view()->assign('backuri',$request->getServer('HTTP_REFERER'));       
+                $this->view()->setTemplate('authorize-auth');
+                return; 
+            } else {
+                $authorize->process($request);
+            }            
         }
-        $result = $authorize->getResult();           
-        $this->view()->setTemplate('df');
-        $result->send();
-        return;        
+        $result = $authorize->getResult(); 
+        $this->response->setStatusCode($result->getStatusCode());
+        $this->response->setHeaders($result->getHeaders());
+        $this->response->setContent($result->setContent()->getContent());
+        return $this->response;
     }
 
     /**
@@ -145,7 +147,7 @@ class AuthorizeController extends ActionController
         return array(
             'client_id'     => $clientid, 
             'response_type' => $response_type,
-            'redirect_uri'  => $redirect_uri,
+            'redirect_uri'  => urldecode($redirect_uri),
             'state'         => $state,
             'scope'         => $scope,
         );

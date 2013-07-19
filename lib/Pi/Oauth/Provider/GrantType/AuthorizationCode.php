@@ -10,10 +10,7 @@ class AuthorizationCode extends AbstractGrantType
     protected function validateRequest()
     {
         $request = $this->getRequest();
-        if (!$request->getRequest('client_id')) {
-            $this->setError('invalid_request');
-            return false;
-        }
+
         if (!$request->getRequest('code')) {
             $this->setError('invalid_request');
             return false;

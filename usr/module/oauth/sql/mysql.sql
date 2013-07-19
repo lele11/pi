@@ -8,6 +8,7 @@ CREATE TABLE `{client}` (
   `type` varchar(32) NOT NULL,
   `scope` varchar(32) NOT NULL,
   `grant_type` varchar(32) NOT NULL,
+  `client_desc` varchar(200),
   `time_create` int(20) default NULL,
   PRIMARY KEY  (`id`)
 );

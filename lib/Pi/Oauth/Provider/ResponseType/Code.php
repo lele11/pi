@@ -5,6 +5,10 @@ use Pi\Oauth\Provider\Service;
 
 class Code extends AbstractResponseType
 {
+    protected function validateRequest()
+    {
+        
+    }
     public function process(array $params)
     {
         $code = Service::storage('authorization_code')->add(array(

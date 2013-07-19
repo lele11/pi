@@ -43,9 +43,9 @@ abstract class AbstractStorage implements ModelInterface
         return $result;
     }
 
-    public function get($id)
+    public function get($value, $name = 'id')
     {
-        $params = $this->model->get($id);
+        $params = $this->model->get($value, $name);
         if ($params && $this instanceof CodeInterface) {
             if (!empty($params['expires']) && $params['expires'] < time()) {
                 $params = false;

@@ -5,7 +5,7 @@ use Pi\Oauth\Provider\Service;
 
 class Token extends AbstractResponseType
 {
-    public function process($params)
+    public function process(array $params)
     {
         $tokenData = Service::storage('access_token')->add(array(
             'client_id'     => $params['client_id'],
@@ -15,7 +15,7 @@ class Token extends AbstractResponseType
         // build the URL to redirect to
         $result = array(
             'fragment'  => array(
-                'access_token'  => $tokenData['token'],
+                'access_token'  => $tokenData['access_token'],
                 'expires_in'    => $tokenData['expires_in'],
                 'token_type'    => $tokenData['token_type'],
                 'scope'         => $params['scope'],
