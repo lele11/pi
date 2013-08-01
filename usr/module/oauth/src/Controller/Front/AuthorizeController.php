@@ -99,7 +99,7 @@ class AuthorizeController extends ActionController
                 return;
             }
             if (!$request->ispost()) {
-                $this->view()->assign('backuri',$request->getServer('HTTP_REFERER'));       
+                $this->view()->assign('backuri',$params['redirect_uri']);       
                 $this->view()->setTemplate('authorize-auth');
                 return; 
             } else {
@@ -147,7 +147,7 @@ class AuthorizeController extends ActionController
         return array(
             'client_id'     => $clientid, 
             'response_type' => $response_type,
-            'redirect_uri'  => urldecode($redirect_uri),
+            'redirect_uri'  => urldecode(urldecode($redirect_uri)),
             'state'         => $state,
             'scope'         => $scope,
         );

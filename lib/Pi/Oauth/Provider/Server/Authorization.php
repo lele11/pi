@@ -132,7 +132,7 @@ class Authorization extends AbstractServer
         // @see http://tools.ietf.org/html/rfc6749#section-3.1.2
         $redirectUri = $this->validateRedirectUri($redirectUri, $clientData['redirect_uri']);
         if (!$redirectUri) {
-            $this->setError('invalid_request');
+            $this->setError('invalid_request', 'redirect url is validate');
             return false;
         }
 

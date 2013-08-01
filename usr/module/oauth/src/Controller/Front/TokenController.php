@@ -15,10 +15,11 @@ class TokenController extends ActionController
 
     /**
     * get new access token by refersh token
-    * params :  grant_type  must "refersh_token',
+    *
+    * @param :  grant_type  must "refersh_token',
     *           refersh_token 
     *           client_id :optional /may use other authorization method to auth client
-    * @return json  like access_token
+    * @return json  
     */
     public function refershAction()
     {

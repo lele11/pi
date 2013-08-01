@@ -53,11 +53,11 @@ return array(
                 'sqlfile'   => 'sql/mysql.sql',
                 // Tables to be removed during uninstall, optional - the table list will be generated automatically upon installation
                 'schema'    => array(
-                    'authcode'          => 'table',
-                    'client'          => 'table',
-                    'access_token'          => 'table',
-                    'refresh_token'          => 'table',
-                    'user_authorization'          => 'table',
+                    'authorization_code'            => 'table',
+                    'client'                        => 'table',
+                    'access_token'                  => 'table',
+                    'refresh_token'                 => 'table',
+                    'user_authorization'            => 'table',
                    )
             ),
             // Module configs

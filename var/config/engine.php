@@ -26,6 +26,7 @@ return array(
         'salt'          => '59abef9652304286c62a2bd5b5ccef9d',
 
         //Run mode. Potential values: production - for production, debug - for users debugging, development - for developers, close - for maintenance
+        // 'environment'   => 'production',
         'environment'   => 'development',
     ),
 

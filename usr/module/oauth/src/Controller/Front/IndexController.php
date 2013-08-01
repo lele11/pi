@@ -10,6 +10,8 @@ class IndexController extends ActionController
 {
     public function indexAction()
     {
-        
+    	$token =  '031218f95005072724aa6c7a35134173eab84fcc';
+	    $data = Pi::service('api')->oauth(array('token', 'checkToken'), $token);
+        var_dump($data);
     }
 }

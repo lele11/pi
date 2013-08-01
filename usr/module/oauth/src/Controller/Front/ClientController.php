@@ -11,50 +11,60 @@ use Module\Oauth\Lib\UserHandler as User;
 class ClientController extends ActionController
 {
     protected $config = array(
-    'server'    => array(
-        'authorization' => array(
-            'response_types'    => array(
-                'code', 'token',
+        'server'    => array(
+            'authorization' => array(
+                'response_types'    => array(
+                    'code', 'token',
+                ),
+            ),
+            'grant' => array(
+                'grant_types'   => array(
+                    'authorization_code'    => 'AuthorizationCode',
+                    'password'              => 'Password',
+                    'client_credentials'    => 'ClientCredentials',
+                    'refresh_token'         => 'RefreshToken',
+                    'urn:ietf:params:oauth:grant-type:jwt-bearer'
+                                            => 'JwtBearer',
+                ),
+            ),
+            'resource'  => array(
+                'token_type'    => 'bearer',
+                'www_realm'     => 'service',
             ),
         ),
-        'grant' => array(
-            'grant_types'   => array(
-                'authorization_code'    => 'AuthorizationCode',
-                'password'              => 'Password',
-                'client_credentials'    => 'ClientCredentials',
-                'refresh_token'         => 'RefreshToken',
-                'urn:ietf:params:oauth:grant-type:jwt-bearer'
-                                        => 'JwtBearer',
-            ),
-        ),
-        'resource'  => array(
-            'token_type'    => 'bearer',
-            'www_realm'     => 'service',
-        ),
-    ),
-    'storage'   => array(
-        'model_set'             => array(
-            'name'      => 'database',
-            'config'    => array(
-                'table_prefix'  => 'oauth',
-            ),
-        ),
-        'client' => array(
+        'storage'   => array(
             'model_set'             => array(
                 'name'      => 'database',
                 'config'    => array(
                     'table_prefix'  => 'oauth',
+                ),
             ),
-        ),      
-    ),
-        )
-    );
+            'client' => array(
+                'model_set'             => array(
+                    'name'      => 'database',
+                    'config'    => array(
+                        'table_prefix'  => 'oauth',
+                ),
+            ),      
+        ),
+            )
+        );
     public function indexAction()
     {
         // $this->view()->setTemplate('client-index');
     }
+
+    /**
+    * register action , should login before register 
+    */
     public function registerAction()
     {
+        if (!User::isLogin()) {
+            $login_page = 'http://pi-oauth.com/system/login/index';
+            $this->view()->assign('login',$login_page);
+            $this->view()->setTemplate('authorize-redirect');
+            return;
+        }
         $form = new ClientRegisterForm();
         $form->setAttribute('method','POST');
         $form->setAttribute('action', $this->url('', array('action' => 'register')));
@@ -70,14 +80,13 @@ class ClientController extends ActionController
             $data = $form->getData();            
             $data = array(
                 'client_name' => $data['clientname'],
-                'redirect_uri' => urlencode($data['redirect_uri']),
+                'redirect_uri' => urldecode(urldecode($data['redirect_uri'])),
                 'uid' => $uid,
-                'grant_type' => $data['clienttype'],
                 'type' => 'public',
                 'client_desc' => $data['clientdesc'],
                 );
             Oauth::boot($this->config);
-            // $result = Oauth::storage('client')->addClient($data);
+            $result = Oauth::storage('client')->addClient($data);
             $this->redirect()->toUrl('/oauth/client/list');
             return;
         }
@@ -85,59 +94,48 @@ class ClientController extends ActionController
         $this->view()->setTemplate('client-register');        
     }
 
+    /**
+    * there is a client id ,show info of this client
+    * or show client list with brife info
+    */
     public function listAction()
     {
-        $userid = User::getUserid();
+        $id = $this->params('id', '');
         Oauth::boot($this->config);
-        $result = Oauth::storage('client')->get($userid, 'uid');
-        $this->view()->assign('client', $result);d($result);
-        $this->view()->setTemplate('client-registered');
-    }
-    public function profileAction()
-    {
-        $userinfo = User::getUserinfo();
-        $model = Pi::model('client','oauth');
-        $rowset = $model->select(array('uid' => $userinfo['id']));
-        if (empty($rowset)) {
-            $data = "没有注册应用，快去<a href = '/oauth/client/register'>注册</a>吧";
+        if (!$id) {
+            $userid = User::getUserid();
+            $result = Oauth::storage('client')->getClientByUid($userid);
+            $this->view()->assign('client', $result);
+            $this->view()->setTemplate('client-list');
         } else {
-            $data = $rowset->toArray();
+            $result = Oauth::storage('client')->get($id);
+            $this->view()->assign('client', $result);
+            $this->view()->setTemplate('client-info');
+        }      
+    }
+    /**
+    * delete a client 
+    */
+    public function deleteAction()
+    {
+        if ($this->request->ispost()) {
+            return false;
         }
-        $this->view()->assign('data',$data);
-        $this->view()->setTemplate('client-profile');
+        Oauth::boot($this->config);
+        $result = Oauth::storage('client')->delete($id);
     }
 
-    public function editprofileAction()
+    /*
+    * an ajax action , update client info
+    */
+    public function updateAction()
     {
-        $userinfo = User::getUserinfo();
-        $form = new ClientRegisterForm();
-        $cid = $this->params('cid','');
-        $form->setAttribute('action', $this->url('', array('action' => 'editprofile','cid'=>$cid)));
-        $this->view()->assign('form', $form);
-        $model = Pi::model('client', 'oauth');
-        if ($cid) {
-            $row = $model->select(array('cid' => $cid));
-            $rowdata = $row->toArray();
-            if (is_array($rowdata) && $userinfo['id'] == $rowdata[0]['uid']) {
-                $form->setData(array('clientname' => $rowdata[0]['cname'], 'redirect_uri' => $rowdata[0]['redirect_uri'] ));            
-            }
+        if (!$this->request->ispost()) {
+            return false;
         }
-        if ($this->request->ispost()) {
-            $post = $this->request->getPost();
-            $form->setData($post);
-            $form->setInputFilter(new ClientRegisterFilter);
-            if(!$form->isValid()) {
-                $this->view()->assign('form', $form);
-            } else {
-                $data = $form->getData();
-                $data = array(
-                    'cname' => $data['clientname'],
-                    'redirect_uri' => $data['redirect_uri'],
-                );
-                $model->update($data,array('cid'=>$cid));
-            }
-        }
-        
-        $this->view()->setTemplate('client-profileedit');
+        $post = $this->request->getPost();
+        Oauth::boot($this->config);
+        $result = Oauth::storage('client')->update($post['id'],$post);
+        return $result;
     }
 }

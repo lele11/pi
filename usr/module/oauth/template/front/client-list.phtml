@@ -1,0 +1,70 @@
+
+<div class="client-list">
+<table style="margin-top:10px">
+        <thead class="list-header">
+            <tr class="head-row">
+                <th class="col1">名称</th>
+                <th class="col2">类型</th>
+                <th class="col3">创建时间</th>  
+                <th class="col4">操作</th>
+            </tr>
+        </thead>
+        <tbody>      
+        <?php foreach ($client as $value) {?>      
+            <tr class="body-row ">            
+                <td class="col1">
+                    <a href="list?id=<?php echo $value['id'] ?>" class="app-name" title="myapp"><?php echo $value['client_name']; ?></a>
+                </td>
+                <td class="col2">
+                    <?php echo $value['type'] ?>
+                </td>
+                <td class="col3">
+                    <?php echo date('Y-m-d h:m:s', $value['time_create']); ?>
+                </td>
+                <td class="col4">
+                	<a href="list?id=<?php echo $value['id'] ?>">详细信息</a>
+                </td>
+            </tr>
+            <?php } ?>
+        </tbody>
+    </table>
+</div>
+
+
+<style type="text/css">
+	.client-list table{
+	border-collapse: collapse;
+	border-spacing: 0;
+	color: #000000;
+	text-align: center;
+	width: 100%;
+	table-layout: fixed;
+	word-wrap: break-word;
+	word-break: break-all;
+	zoom: 1;
+	}
+	.body-row td {
+	border: 1px solid #fff;
+	overflow-x: hidden;
+	white-space: nowrap;
+	word-wrap: normal;
+	text-overflow: ellipsis;
+	}
+
+	.client-list .body-row {
+	height: 31px;
+	line-height: 31px;
+	}
+	.client-list .col1 {
+	text-align: left;
+	padding-left: 20px;
+	}
+	.col2 {
+	width: 150px;
+	text-align: left;
+	padding-left: 20px;
+	}
+	.col3 {
+	width: 154px;
+	}
+</style>

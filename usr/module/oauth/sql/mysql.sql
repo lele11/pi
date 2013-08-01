@@ -7,7 +7,6 @@ CREATE TABLE `{client}` (
   `redirect_uri` varchar(200) NOT NULL,
   `type` varchar(32) NOT NULL,
   `scope` varchar(32) NOT NULL,
-  `grant_type` varchar(32) NOT NULL,
   `client_desc` varchar(200),
   `time_create` int(20) default NULL,
   PRIMARY KEY  (`id`)
@@ -18,11 +17,11 @@ CREATE TABLE `{authorization_code}` (
   `client_id` varchar(32) NOT NULL,
   `scope` varchar(32) NOT NULL,
   `resource_owner` varchar(32) NOT NULL,
-  `redirect_uri` varchar(32) NOT NULL,
+  `redirect_uri` varchar(200) NOT NULL,
   `code` varchar(40) NOT NULL,  
   `expires` int(11) NOT NULL,
   PRIMARY KEY  (`id`)
-) ;
+);
 
 CREATE TABLE `{access_token}` (
   `id` bigint(20) NOT NULL auto_increment,

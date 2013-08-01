@@ -34,9 +34,10 @@ class AuthorizationCode extends AbstractStorage implements CodeInterface
 
     /**
     * get code data by code
+    * @param authorization code 
     * @return array
     */
-    public function getCodebyCode($code)
+    public function getbyCode($code)
     {
         return $this->model->get($code,'code');
     }

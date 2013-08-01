@@ -5,10 +5,8 @@
 <div><span>应用名称：</span><?php echo $this->formElement($element) ?> </div>
 <?php $element = $form->get('redirect_uri'); ?>
 <div><span>应用地址：</span><?php echo $this->formElement($element) ?></div>
-<?php $element = $form->get('clienttype'); ?>
-<div><span>应用类型：</span><?php echo $this->formElement($element) ?></div>
 <?php $element = $form->get('clientdesc'); ?>
-<div><span>应用类型：</span><?php echo $this->formElement($element) ?></div>
+<div><span>应用介绍：</span><?php echo $this->formElement($element) ?></div>
 <?php $element = $form->get('submit'); ?>
 <div><?php echo $this->formElement($element) ?></div>
 

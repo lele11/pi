@@ -43,7 +43,7 @@ class Client extends AbstractStorage implements ValidateInterface
     /**
     * get client info by user id 
     */
-    public function getClientDataByUser($uid)
+    public function getClientByUid($uid)
     {
         return $this->model->getByUid($uid);
     }
