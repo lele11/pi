@@ -35,8 +35,8 @@ $config['item'] = array(
  		'category'		=> 'general'
  	),
  	'callback'		 => array(
- 		'title'			=> '回调地址'，
- 		'description'	=> '授权结束后的回调地址'，
+ 		'title'			=> '回调地址',
+ 		'description'	=> '授权结束后的回调地址',
  		'edit' 			=> 'text',
  		'value'			=> '',
  		'filter'		=> 'LONG',

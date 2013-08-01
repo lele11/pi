@@ -29,7 +29,7 @@ class Client extends AbstractApi
     */
     public function getClient($name, $server)
     {
-        $row = Pi::model('oauth_clientID')->select(array(
+        $row = Pi::model('oauth_client', 'consumer')->select(array(
             'name'   => $name,
             'server' => $server,
         ));

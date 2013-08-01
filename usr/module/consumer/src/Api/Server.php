@@ -8,35 +8,26 @@ use Pi\Application\AbstractApi;
 class Server extends AbstractApi
 {
     
-    public $client_id;
-  
+    public $client_id;  
     public $client_secret;
- 
-    public $access_token;
-  
-    public $refresh_token;
-
     public $host ;
-
-    public $timeout = 30;
- 
-    public $connecttimeout = 30;
- 
+    public $timeout = 30; 
+    public $connecttimeout = 30; 
     public $ssl_verifypeer = FALSE;
-
-    public $format = 'json';
- 
-    public $decode_json = TRUE;
-   
+    public $format = 'json'; 
+    public $basic = FALSE;
+    public $decode_json = TRUE;   
     public $useragent = 'OAuth consumer';
-
     public $debug = FALSE; 
-
     protected $module = 'consumer';
    
     function accessTokenURL()  { return $this->host . '/oauth/grant/index'; }
   
     function authorizeURL()    { return $this->host . '/oauth/authorize/index'; }
+
+    function refreshTokenURL()    { return $this->host . '/oauth/token/refresh'; }
+
+    function revokeTokenURL()    { return $this->host . '/oauth/token/index'; }
  
     /**
      * construct OAuth object
@@ -54,13 +45,13 @@ class Server extends AbstractApi
     }
  
     /**
-     * authorize接口
+     * 请求授权服务的authorize
      *
      * @param string $url 授权后的回调地址,站外应用需与回调地址一致,站内应用需要填写canvas page的地址
      * @param string $response_type 支持的值包括 code 和token 默认值为code
      * @param string $state 用于保持请求和回调的状态。在回调时,会在Query Parameter中回传该参数
      *
-     * @return array 
+     * @return authorize URL 
      */
     function getAuthorizeURL( $url, $response_type = 'code' ) 
     {
@@ -105,26 +96,39 @@ class Server extends AbstractApi
  
         $response = $this->oAuthRequest($this->accessTokenURL(), 'POST', $params);
         $token = json_decode($response, true);
-        if ( is_array($token) && !isset($token['error']) ) {
-            $this->setToken($token);
-        } 
+        // if ( is_array($token) && !isset($token['error']) ) {
+        //     $this->setToken($token);
+        // } 
         return $token;
     }
  
     /**
-    * 当token过期后，使用refresh token 重新获取access_token
+    * 使用refresh token 重新获取access_token
     *
     * @return array
     */
-    function refreshToken()
+    function refreshToken($refreshtoken)
     {
-        $token = $this->getTokenFromSess();
-        $response = $this->oAuthRequest($this->refreshTokenURL(), 'GET', $params);
+        $params = array();
+        $params['client_id'] = $this->client_id;
+        $params['client_secret'] = $this->client_secret;
+        $params['grant_type'] = 'refresh_token';
+        $params['refresh_token'] = $refreshtoken;
+        $response = $this->oAuthRequest($this->refreshTokenURL(), 'POST', $params);
         $token = json_decode($response, true);
-        if ( is_array($token) && !isset($token['error']) ) {
-            $this->setToken($token);
-        }        
+        // if ( is_array($token) && !isset($token['error']) ) {
+        //     $this->setToken($token);
+        // }        
         return $token;
+    }
+
+    /**
+    * 取消全部用户对某个应用的授权token
+    * @return void
+    */
+    public function revokeToken()
+    {
+        $response = $this->oAuthRequest($this->revokeTokenURL(), 'GET', $params);
     }
 
     /**
@@ -181,8 +185,6 @@ class Server extends AbstractApi
         if ( isset($_COOKIE[$key]) && $cookie = $_COOKIE[$key] ) {
             parse_str($cookie, $token);
             if ( isset($token['access_token']) && isset($token['refresh_token']) ) {
-                $this->access_token = $token['access_token'];
-                $this->refresh_token = $token['refresh_token'];
                 return $token;
             } else {
                 return false;
@@ -211,11 +213,17 @@ class Server extends AbstractApi
             default:
                 $headers = array();
                 if ( is_array($parameters) ) {
+                    if ($this->basic) {
+                        $headers[] = "Authorization: Basic " . base64_encode($params['client_id'] . ":" . $params['client_secret']);           
+                        unset($params['client_id']);
+                        unset($params['client_secret']);
+                    }
                     $body = http_build_query($parameters);
                 }
                 $headers[] = "X-Requested-With:XMLHttpRequest";
                 $headers[] = "Accept: application/json";
                 $headers[] = "Content-Type: application/x-www-form-urlencoded";
+               
                 return $this->http($url, $method, $body, $headers);
         }
     }
@@ -276,6 +284,11 @@ class Server extends AbstractApi
         return $response;
     }
 
+    /**
+    * generate state parameter
+    * @return string
+    * @ignore
+    */
     function setState()
     {
         $state = base64_encode(rand()."df");
@@ -285,6 +298,11 @@ class Server extends AbstractApi
         $_SESSION['state'] = $state;
         return $state;
     }
+
+    /**
+    * return the error message ,when get token form server
+    * @ignore
+    */
     function error( $error)
     {
         echo $error;

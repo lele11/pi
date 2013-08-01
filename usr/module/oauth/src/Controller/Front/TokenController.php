@@ -16,8 +16,8 @@ class TokenController extends ActionController
     /**
     * get new access token by refersh token
     *
-    * @param :  grant_type  must "refersh_token',
-    *           refersh_token 
+    * @param :  grant_type : must "refersh_token',
+    *           refersh_token :
     *           client_id :optional /may use other authorization method to auth client
     * @return json  
     */

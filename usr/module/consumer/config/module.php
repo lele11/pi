@@ -42,8 +42,8 @@ return array(
                 // SQL schema/data file
                 'sqlfile'   => 'sql/mysql.sql',
                 'schema'    => array(
-                    'oauth_clientID'   => 'table',
-                )
+                    'oauth_client'   => 'table',
+                ),
             ),
         'config'    => 'config.php',
         // ACL specs

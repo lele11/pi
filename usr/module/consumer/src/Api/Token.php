@@ -9,12 +9,15 @@ class Token extends AbstractApi
     /**
     * 获取已保存的token，如果只有refreshed token则使用refresh token 重新获取
     *
+    * @param $config = array('client_id' => 'value', 'client_secret' => 'value' , 'server_host' => 'value') 
+    *        client_id , client_secret : client module 的身份信息
+    *        server_host : Oauth 授权服务器的地址
     * @return array 没有token则为false
     */
-    public function getToken()
+    public function getToken($config)
     {
         //首先 查询数据库 是否存在 ，否则开始授权流程，是否过期 ，否则进入刷新流程，是否有refresh ，否则进入授权流程 
-        $oauth = Pi::service('api')->consumer(array('test','gettest'),$this->config());
+        $oauth = Pi::service('api')->consumer(array('server','getServer'),$config());
         $token = $oauth->getTokenFromSess();
         if (!$token) {
             return false;
@@ -27,10 +30,12 @@ class Token extends AbstractApi
 
     public function setToken()
     {
-        //授权流程完成后 将token 保存到数据库中
+        
     }
     public function revokeToken()
     {
-        
+        $oauth = Pi::service('api')->consumer(array('server','getServer'),$config());
+        // $token = $oauth->getToken();
+        $oauth->revokeToken();
     }
 }
