@@ -34,7 +34,7 @@ class AuthController extends ActionController
         }
         $code = $this->params('code','');
         $state = $this->params('state','');
-        $next = $this->params('next', '');
+        // $next = $this->params('next', '');
 
         if (isset($_SESSION['state'])) {
             if ($state != $_SESSION['state']) {
@@ -52,7 +52,7 @@ class AuthController extends ActionController
             $token = $oauth->getAccessToken('code',array('code' => $code, 'redirect_uri' => $redirect_uri));
         }
         if (!isset($token['error'])) {
-            $this->view()->assign('url', $next);
+            // $this->view()->assign('url', $next);
             $this->view()->setTemplate('callback-jump');
         } else {
             $this->view()->assign('error',$token);
@@ -61,7 +61,23 @@ class AuthController extends ActionController
         
     }
 
-    
+    public function testAction()
+    {
+        $module = 'page';
+        $server = '测试';
+        d($_SESSION);
+        $result = Pi::service('api')->consumer(array('token', 'getAccessToken'), $module, $server,'/consumer/auth/test');
+        
+        d($result);
+        // if (is_array($result)) {
+        //     d($result);
+        // } else {
+            // $this->redirect()->toUrl('http://' . $result);
+        // }
+        // $this->view()->setTemplate('callback-error');        
+        $this->view()->setTemplate('index');        
+    }
+
     public function tokenAction()
     {
         // $token = $this->getToken();var_dump($token);
@@ -69,9 +85,50 @@ class AuthController extends ActionController
         // if (!$token) {
         //  return false;
         // }
-        echo "<pre>";
-        var_dump($_SESSION);
-        unset($_SESSION['token']);
+        // echo "<pre>";
+        // var_dump($_SESSION);
+        // unset($_SESSION['token']);
         // echo $this->request->getServer('HTTP_HOST').$this->request->getServer('REDIRECT_URL');
+    // get client info
+    // if token
+    //     return token
+    // elseif  refresh_token
+    //     call  get token by refresh
+    //     return token
+    // else
+    //     call get token
+    //     return token
+        $module = 'page';
+        $server = '测试';
+        $type = 'code';
+        $client = Pi::service('api')->consumer(array('oAuth', 'getClient'), $module, $server);
+        if (!$client) {
+            return false;
+        }
+        //获取已取得的token
+        $token = Pi::service('api')->consumer(array('token', 'getToken'), $client);
+
+        //获取到的是refresh token，则刷新
+        if (!is_array($token) && $token) {
+            $data = array('refresh_token' => $token);
+            $token = Pi::service('api')->consumer(array('oAuth', 'getService'), $client, 'refresh', $data);
+        }
+
+        //没有token，则请求
+        if (!$token) {
+            if ($type == 'code') {
+                $url = Pi::service('api')->consumer(array('oAuth', 'getService'), $client, 'code');
+                $this->redirect()->toUrl('http://' . $url);
+                return false;
+            } 
+            if ($type = 'password') {
+                $token = Pi::service('api')->consumer(array('oAuth', 'getService'), $client, 'code', $data);
+            }
+        }
+
+        // var_dump($token);
+        // exit();
+        // $this->view()->setTemplate(false);
+        return $token;
     }
 }

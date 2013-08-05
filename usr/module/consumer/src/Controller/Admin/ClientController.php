@@ -55,6 +55,9 @@ class ClientController extends ActionController
         }        
     }
 
+    /**
+    * 后台查看客户端信息页面
+    */
     public function listAction()
     {
         //列出已有的客户端信息
@@ -72,6 +75,10 @@ class ClientController extends ActionController
         $this->view()->setTemplate('client-token');
     }
 
+    /**
+    * 在客户端提供取消应用授权的功能应该是不合适的，因为本consumer模块式提供给多个客户端模块使用，
+    * consumer模块只是为了简化客户端访问server的开发问题，不应该提供过多的功能接口
+    */
     public function revokeAction()
     {
         $row = Pi::model('oauth_client', 'consumer')->select(array(

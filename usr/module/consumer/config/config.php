@@ -26,6 +26,14 @@ $config['item'] = array(
  		'filter'		=> 'LONG',
  		'category'		=> 'general'
  	),
+ 	'server_name'	 => array(
+ 		'title'			=> '服务器名称',
+ 		'description'	=> 'Name of Service Provider',
+ 		'edit'			=> 'text',
+ 		'value'			=> '',
+ 		'filter'		=> 'LONG',
+ 		'category'		=> 'general',
+ 	),
  	'server_host'	 => array(
  		'title' 		=> '授权服务器域名',
  		'description' 	=> 'the host of Oauth Server',
@@ -34,13 +42,5 @@ $config['item'] = array(
  		'filter'		=> 'LONG',
  		'category'		=> 'general'
  	),
- 	'callback'		 => array(
- 		'title'			=> '回调地址',
- 		'description'	=> '授权结束后的回调地址',
- 		'edit' 			=> 'text',
- 		'value'			=> '',
- 		'filter'		=> 'LONG',
- 		'category'		=> 'general',
-  	),
 );
 return $config;

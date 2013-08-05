@@ -60,6 +60,5 @@ class ClientInfoFilter extends InputFilter
         ));
     }
 
-
-    
+  
 }

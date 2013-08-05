@@ -74,7 +74,7 @@ class Server extends AbstractApi
      *   - 当$type为token时： array('refresh_token'=>...)
      * @return array 
      */
-    function getAccessToken( $type = 'code', $keys ) 
+    public function getAccessToken( $type = 'code', $keys ) 
     {
         $params = array();
         $params['client_id'] = $this->client_id;
@@ -102,25 +102,7 @@ class Server extends AbstractApi
         return $token;
     }
  
-    /**
-    * 使用refresh token 重新获取access_token
-    *
-    * @return array
-    */
-    function refreshToken($refreshtoken)
-    {
-        $params = array();
-        $params['client_id'] = $this->client_id;
-        $params['client_secret'] = $this->client_secret;
-        $params['grant_type'] = 'refresh_token';
-        $params['refresh_token'] = $refreshtoken;
-        $response = $this->oAuthRequest($this->refreshTokenURL(), 'POST', $params);
-        $token = json_decode($response, true);
-        // if ( is_array($token) && !isset($token['error']) ) {
-        //     $this->setToken($token);
-        // }        
-        return $token;
-    }
+
 
     /**
     * 取消全部用户对某个应用的授权token
@@ -200,7 +182,7 @@ class Server extends AbstractApi
      * @return string 
      * @ignore
      */
-    function oAuthRequest($url, $method, $parameters) 
+    protected function oAuthRequest($url, $method, $parameters) 
     { 
         if (strrpos($url, 'http://') !== 0 && strrpos($url, 'https://') !== 0) {
             $url = "{$this->host}{$url}.{$this->format}";
@@ -234,7 +216,7 @@ class Server extends AbstractApi
      * @return string API results
      * @ignore
      */
-    function http($url, $method, $postfields = NULL, $headers = array()) 
+    protected function http($url, $method, $postfields = NULL, $headers = array()) 
     {
         $ci = curl_init();        
         curl_setopt($ci, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0);
@@ -289,7 +271,7 @@ class Server extends AbstractApi
     * @return string
     * @ignore
     */
-    function setState()
+    protected function setState()
     {
         $state = base64_encode(rand()."df");
         if (isset($_SESSION['state'])) {
